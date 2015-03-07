@@ -1,8 +1,8 @@
-package me.lachlanap.oldtoby.model
+package me.lachlanap.oldtoby.server.helpers
 
-import scala.util.{Success, Try, Random}
+import scala.util.Random
 
-object Helpers {
+trait Generators {
   val r = new Random()
 
   def name(prefix: String): String = prefix + "_" + r.alphanumeric.take(10).mkString

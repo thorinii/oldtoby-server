@@ -2,4 +2,5 @@
 cabal.sandbox.config
 target
 dist
-**/.idea/workspace.xml
+**/.idea
+log
