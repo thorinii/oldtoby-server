@@ -1,0 +1,33 @@
+-- OldToby API Cabal package info
+
+
+name:                oldtobyapi
+
+-- Using semver Semantic Versioning
+version:             0.1.0.0
+
+synopsis:            The HTTP API for OldToby, a sequential job pipeline system for image processing
+license:             MIT
+license-file:        LICENSE
+
+author:              Lachlan Phillips
+maintainer:          flipsidelachy@gmail.com
+
+copyright:           Copyright 2015 Lachlan Phillips
+
+category:            Web
+build-type:          Simple
+
+cabal-version:       >=1.8
+
+
+executable oldtoby
+  hs-source-dirs:    src
+
+  main-is:           Main.hs
+
+  -- Modules included in this executable, other than Main.
+  -- other-modules:
+
+  build-depends:       base ==4.6.*
+
