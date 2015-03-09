@@ -53,7 +53,7 @@ function run_test {
 
     echo
 
-    echo "Starting server..."
+    echo "Starting server on port $PORT..."
     SERVER_PID=$(start_server $SERVER_EXE $PORT)
     echo "Server is PID $SERVER_PID"
 
@@ -73,6 +73,6 @@ function run_test {
 WORKING_DIR=${1:-.}
 cd $WORKING_DIR
 
-$PORT=$(shuf -i 10000-65000 -n 1)
+PORT=$(shuf -i 10000-65000 -n 1)
 
 run_test "./oldtobyapi" $PORT
