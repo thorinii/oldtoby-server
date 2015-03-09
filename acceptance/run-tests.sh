@@ -69,4 +69,7 @@ function run_test {
 }
 
 
+WORKING_DIR=${1:-.}
+cd $WORKING_DIR
+
 run_test "./oldtobyapi" 8273
