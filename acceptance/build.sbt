@@ -10,3 +10,8 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
+
+
+testOptions in ThisBuild <+= (target in Test) map {
+  t => Tests.Argument("-o", "-u", t + "/test-reports")
+}
