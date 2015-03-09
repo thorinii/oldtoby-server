@@ -21,7 +21,7 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 
-executable oldtoby
+executable oldtobyapi
   hs-source-dirs:    src
 
   main-is:           Main.hs
