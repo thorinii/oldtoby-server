@@ -6,6 +6,7 @@ function check_for_server_exe {
         exit 1
     else
         echo "Found $1"
+        chmod -c a+x $1
     fi
 }
 
