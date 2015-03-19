@@ -1,9 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
-
 module Api.Core where
 
-import Api.Services.JobService(JobService(JobService), jobServiceInit)
+import Api.Services.JobService(JobService, jobServiceInit)
 import qualified Data.ByteString.Char8 as B
 import Control.Lens (makeLenses)
 import Snap.Core

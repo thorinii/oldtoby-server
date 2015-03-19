@@ -1,11 +1,9 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE FlexibleInstances #-}
-
 module Api.Services.JobService where
 
 import Api.Generators (randomId)
-import Api.Types (Id(..), Job(Job))
+import Api.Types (Id(..))
+import qualified Api.Services.Database as DB
+
 import Control.Applicative
 import Control.Lens (makeLenses)
 import Control.Monad.IO.Class (liftIO)
@@ -42,20 +40,22 @@ instance FromJSON JobCreationRequest where
   parseJSON (Object v) = JobCreationRequest <$>
                          (v .: "name") <*>
                          (v .: "pipeline")
+  parseJSON _          = empty
+
 
 createJob :: Handler b JobService ()
 createJob = do
   request <- reqJSON
-  jobId@(Id jobIdRaw) <- liftIO $ randomId "job"
+  jobId <- liftIO $ randomId "job"
 
   let jobName    = jcrJobName request
       pipelineId = jcrJobPipeline request
       pipeline   = Id pipelineId
-      job        = Job jobId jobName pipeline
+
+  job <- DB.createJob jobId jobName pipeline
 
   liftIO $ print job
 
-  execute "INSERT INTO job (id, name, pipeline) VALUES (?, ?, ?)" (jobIdRaw, jobName, pipelineId)
   modifyResponse $ setResponseCode 201
   modifyResponse $ setHeader "Content-Type" "application/json"
   writeLBS . encode $ job

@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 ------------------------------------------------------------------------------
 -- | This module is where all the routes and handlers are defined for your
 -- site. The 'app' function is the initializer that combines everything
@@ -7,21 +5,11 @@
 module Site (app) where
 
 ------------------------------------------------------------------------------
-import           Api.Core
-import           Control.Applicative
-import           Data.ByteString (ByteString)
-import qualified Data.Text as T
-import           Snap.Core
-import           Snap.Snaplet
-import           Snap.Snaplet.Auth
-import           Snap.Snaplet.Auth.Backends.JsonFile
-import           Snap.Snaplet.Heist
-import           Snap.Snaplet.Session.Backends.CookieSession
-import           Snap.Util.FileServe
-import           Heist
-import qualified Heist.Interpreted as I
+import Api.Core
+import Data.ByteString (ByteString)
+import Snap.Snaplet
 ------------------------------------------------------------------------------
-import           Application
+import Application
 
 ------------------------------------------------------------------------------
 -- | The application's routes.
