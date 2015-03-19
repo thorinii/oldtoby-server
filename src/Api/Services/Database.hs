@@ -1,4 +1,6 @@
-module Api.Services.Database where
+module Api.Services.Database (
+  createJob
+) where
 
 import Api.Types
 
