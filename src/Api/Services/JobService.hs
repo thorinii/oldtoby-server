@@ -2,13 +2,13 @@ module Api.Services.JobService where
 
 import Api.Generators (randomId)
 import Api.Types (Id(..), Job(..))
+import Api.Services.InterfaceTypes
 import qualified Api.Services.Database as DB
 
-import Control.Applicative
 import Control.Lens (makeLenses)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State.Class (get)
-import Data.Aeson (encode, FromJSON(..), ToJSON(..), Value(Object), object, (.:), (.=))
+import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.Text as T
 import Snap.Core
@@ -57,7 +57,7 @@ routeCreateJob = do
 
 createJob :: JobCreationRequest -> Route b JobResponse
 createJob (JobCreationRequest name pipeline) = do
-  jobId <- liftIO $ randomId "job"
+  jobId <- liftIO $ randomId 'j'
 
   job <- DB.createJob jobId name (Id pipeline)
   return $ jobResponse job
@@ -70,31 +70,3 @@ getJobs = do
   writeLBS . encode $ (jobs :: [Job])
 
 -}
-
-
-
--- | Request/response data structures
-
-data JobCreationRequest = JobCreationRequest { jcrJobName :: T.Text,
-                                               jcrJobPipeline :: T.Text }
-
-data JobResponse = JobResponse { jrId :: Id,
-                                 jrName :: T.Text,
-                                 jrPipeline :: Id }
-
-jobResponse :: Job -> JobResponse
-jobResponse (Job id name pipeline) = JobResponse id name pipeline
-
-
-
-instance FromJSON JobCreationRequest where
-  parseJSON (Object v) = JobCreationRequest <$>
-                         (v .: "name") <*>
-                         (v .: "pipeline")
-  parseJSON _          = empty
-
-
-instance ToJSON JobResponse where
-   toJSON (JobResponse (Id id) name (Id pipeline)) = object [ "id" .= id,
-                                                              "name" .= name,
-                                                              "pipeline" .= pipeline ]

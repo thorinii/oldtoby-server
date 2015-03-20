@@ -12,11 +12,10 @@ import Api.Types
 
 
 
-randomId :: T.Text -> IO Id
+randomId :: Char -> IO Id
 randomId prefix = do
-  suffix <- randomString 10
-  let connector = T.singleton '_'
-  return $ Id (prefix `T.append` connector `T.append` suffix)
+  suffix <- randomString 20
+  return $ Id (prefix `T.cons` suffix)
 
 
 

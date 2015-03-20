@@ -67,7 +67,7 @@ function start_server {
 
 function run_tests {
     PORT=$1
-    sbt clean "test-only * -- -Dserver=http://localhost:$PORT/"
+    sbt "test-only * -- -Dserver=http://localhost:$PORT/"
 }
 
 
