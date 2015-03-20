@@ -1,4 +1,5 @@
 module Api.Services.Database (
+  listJobs,
   createJob
 ) where
 
@@ -10,10 +11,16 @@ import Database.PostgreSQL.Simple.FromField
 import Snap.Core
 import Snap.Snaplet.PostgresqlSimple
 
+
+listJobs :: (MonadSnap m, HasPostgres m) => m [Job]
+listJobs = query_ "SELECT * FROM job"
+
+
 createJob :: (MonadSnap m, HasPostgres m) => Id -> T.Text -> Id -> m Job
 createJob (Id id) name (Id pipeline) = do
   execute "INSERT INTO job (id, name, pipeline) VALUES (?, ?, ?)" (id, name, pipeline)
   return $ Job (Id id) name (Id pipeline)
+
 
 
 instance FromField Id where

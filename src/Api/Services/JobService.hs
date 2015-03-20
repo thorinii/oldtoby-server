@@ -26,7 +26,8 @@ type Route b c = Handler b JobService c
 -- | Routes
 
 jobRoutes :: [(B.ByteString, Handler b JobService ())]
-jobRoutes = [("/", method POST routeCreateJob)]
+jobRoutes = [("/", method GET routeListJobs),
+             ("/", method POST routeCreateJob)]
 
 
 jobServiceInit :: SnapletInit b JobService
@@ -43,6 +44,13 @@ instance HasPostgres (Handler b JobService) where
 
 -- | Route handlers
 
+routeListJobs :: Route b ()
+routeListJobs = do
+  response <- listJobs
+  modifyResponse $ setResponseCode 200
+  modifyResponse $ setHeader "Content-Type" "application/json"
+  writeLBS . encode $ response
+
 routeCreateJob :: Route b ()
 routeCreateJob = do
   request <- reqJSON
@@ -53,20 +61,17 @@ routeCreateJob = do
   writeLBS . encode $ response
 
 
+
 -- | API implementation
+
+listJobs :: Route b JobListResponse
+listJobs = do
+  jobs <- DB.listJobs
+  return $ JobListResponse (map jobResponse jobs)
 
 createJob :: JobCreationRequest -> Route b JobResponse
 createJob (JobCreationRequest name pipeline) = do
-  jobId <- liftIO $ randomId 'j'
+  id <- liftIO $ randomId 'j'
 
-  job <- DB.createJob jobId name (Id pipeline)
+  job <- DB.createJob id name (Id pipeline)
   return $ jobResponse job
-
-{-
-getJobs :: Handler b JobService ()
-getJobs = do
-  jobs <- query_ "SELECT * FROM job"
-  modifyResponse $ setHeader "Content-Type" "application/json"
-  writeLBS . encode $ (jobs :: [Job])
-
--}

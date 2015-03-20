@@ -30,17 +30,28 @@ class ServerInterface(address: String) extends ScalaFutures {
                                       }.recover { case e: Exception => DownError(e) }.futureValue
 
 
-  def createJob(name: String, pipeline: Id): Either[Unit, Id] = {
+  def createJob(name: String, pipeline: Id): Either[Unit, Job] = {
     val json = Json.obj("name" -> name,
                         "pipeline" -> pipeline.value)
 
     post("/job", json) {
                          case (201, result) =>
-                           val id = Id((result \ "id").as[String])
-                           Right(id)
+                           Right(jobFrom(result))
                          case _ => Left(())
                        }.futureValue
   }
+
+
+  def getJobs: List[Job] = get("/job") {
+                                         case (200, result) =>
+                                           result.as[List[JsValue]].map(jobFrom)
+                                         case _ => List.empty
+                                       }.futureValue
+
+
+  private def jobFrom(js: JsValue) = Job(Id((js \ "id").as[String]),
+                                         (js \ "name").as[String],
+                                         Id((js \ "pipeline").as[String]))
 
 
   private def get[A](u: String)(mapper: (Int, JsValue) => A) = {
@@ -61,6 +72,7 @@ class ServerInterface(address: String) extends ScalaFutures {
       if (resp.body.isEmpty)
         mapper(resp.status, JsNull)
       else try {
+        println(resp.json)
         mapper(resp.status, resp.json)
       } catch {
         case e: JsonParseException =>
@@ -88,3 +100,5 @@ case class Up() extends Status
 
 
 case class Id(value: String)
+
+case class Job(id: Id, name: String, pipeline: Id)

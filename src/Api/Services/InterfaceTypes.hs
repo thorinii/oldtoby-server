@@ -1,6 +1,7 @@
 module Api.Services.InterfaceTypes (
   JobCreationRequest(..),
   JobResponse,
+  JobListResponse(..),
 
   jobResponse
 ) where
@@ -14,10 +15,9 @@ import qualified Data.Text as T
 data JobCreationRequest = JobCreationRequest { jcrJobName :: T.Text,
                                                jcrJobPipeline :: T.Text }
 
-data JobResponse = JobResponse { jrId :: Id,
-                                 jrName :: T.Text,
-                                 jrPipeline :: Id,
-                                 jrUrl :: T.Text }
+data JobResponse = JobResponse Id T.Text Id T.Text
+
+data JobListResponse = JobListResponse [JobResponse]
 
 
 jobResponse :: Job -> JobResponse
@@ -41,6 +41,9 @@ instance ToJSON JobResponse where
                "name" .= name,
                "pipeline" .= pipeline,
                "url" .= url ]
+
+instance ToJSON JobListResponse where
+   toJSON (JobListResponse jobs) = toJSON $ toJSON <$> jobs
 
 
 
