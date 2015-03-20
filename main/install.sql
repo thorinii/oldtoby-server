@@ -5,3 +5,8 @@ CREATE TABLE job (
   name TEXT NOT NULL,
   pipeline TEXT NOT NULL
 );
+
+CREATE TABLE page (
+  id TEXT PRIMARY KEY,
+  job TEXT REFERENCES job(id)
+);

@@ -1,6 +1,7 @@
 module Api.Services.Database (
   listJobs,
-  createJob
+  createJob,
+  createPage
 ) where
 
 import Api.Types
@@ -8,18 +9,23 @@ import Api.Types
 import Control.Applicative
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple.FromField
-import Snap.Core
 import Snap.Snaplet.PostgresqlSimple
 
 
-listJobs :: (MonadSnap m, HasPostgres m) => m [Job]
+listJobs :: HasPostgres m => m [Job]
 listJobs = query_ "SELECT * FROM job"
 
 
-createJob :: (MonadSnap m, HasPostgres m) => Id -> T.Text -> Id -> m Job
+createJob :: HasPostgres m => Id -> T.Text -> Id -> m Job
 createJob (Id id) name (Id pipeline) = do
   execute "INSERT INTO job (id, name, pipeline) VALUES (?, ?, ?)" (id, name, pipeline)
   return $ Job (Id id) name (Id pipeline)
+
+
+createPage :: HasPostgres m => Id -> Id -> m ()
+createPage (Id job) (Id id) = do
+  execute "INSERT INTO page (id, job) VALUES (?, ?)" (id, job)
+  return ()
 
 
 

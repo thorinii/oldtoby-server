@@ -1,5 +1,7 @@
 module Api.Services.InterfaceTypes (
   JobCreationRequest(..),
+  IngestRequest(..),
+
   JobResponse,
   JobListResponse(..),
 
@@ -14,9 +16,9 @@ import qualified Data.Text as T
 
 data JobCreationRequest = JobCreationRequest { jcrJobName :: T.Text,
                                                jcrJobPipeline :: T.Text }
+data IngestRequest = IngestRequest { irPages :: Int }
 
 data JobResponse = JobResponse Id T.Text Id T.Text
-
 data JobListResponse = JobListResponse [JobResponse]
 
 
@@ -29,6 +31,12 @@ instance FromJSON JobCreationRequest where
   parseJSON (Object v) = JobCreationRequest <$>
                          (v .: "name") <*>
                          (v .: "pipeline")
+  parseJSON _          = empty
+
+
+instance FromJSON IngestRequest where
+  parseJSON (Object v) = IngestRequest <$>
+                         (v .: "pages")
   parseJSON _          = empty
 
 

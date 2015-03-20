@@ -49,6 +49,17 @@ class ServerInterface(address: String) extends ScalaFutures {
                                        }.futureValue
 
 
+  def ingest(job: Id, pages: Int): List[Id] = {
+    val json = Json.obj("pages" -> pages)
+
+    post(s"/job/${job.value}/page", json) {
+                              case (201, result) =>
+                                result.as[List[String]].map(Id)
+                              case _ => List.empty
+                            }.futureValue
+  }
+
+
   private def jobFrom(js: JsValue) = Job(Id((js \ "id").as[String]),
                                          (js \ "name").as[String],
                                          Id((js \ "pipeline").as[String]))
@@ -72,11 +83,11 @@ class ServerInterface(address: String) extends ScalaFutures {
       if (resp.body.isEmpty)
         mapper(resp.status, JsNull)
       else try {
-        println(resp.json)
+        println(resp.body)
         mapper(resp.status, resp.json)
       } catch {
         case e: JsonParseException =>
-          throw new TestFailedException(s"When POSTing $u, failed to parse body of response:\n${resp.body }", e, 0)
+          throw new TestFailedException(s"When POSTing $u, failed to parse body of response:\n${resp.body}", e, 0)
       }
     })
   }

@@ -32,7 +32,7 @@ function install_schema {
 
     for i in {0..10}
     do
-        PGPASSFILE=db.pgpass psql -h localhost -U postgres -d postgres -f ../install.sql
+        PGPASSFILE=db.pgpass psql -h localhost -U postgres -d postgres -f ../main/install.sql
         WORKED=$?
 
         if [ $WORKED -eq 0 ]; then
