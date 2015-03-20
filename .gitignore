@@ -5,3 +5,6 @@ dist
 **/.idea
 log
 /snaplets
+**/*.iws
+**/*.ipr
+**/*.iml
