@@ -5,10 +5,11 @@ import Api.Types (Id(..))
 import Api.Services.InterfaceTypes
 import qualified Api.Services.Database as DB
 
-import Control.Lens (makeLenses)
+import Control.Lens (makeLenses, set)
 import Control.Monad (replicateM, forM_)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State.Class (get)
+import Control.Monad.Reader
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.Text as T
@@ -33,15 +34,15 @@ jobRoutes = [("/", method GET routeListJobs),
              ("/:job/page", method POST routeIngest)]
 
 
-jobServiceInit :: SnapletInit b JobService
-jobServiceInit = makeSnaplet "job" "Job Service" Nothing $ do
-  pg <- nestSnaplet "pg" pg pgsInit
+jobServiceInit :: Snaplet Postgres -> SnapletInit b JobService
+jobServiceInit pg = makeSnaplet "job" "Job Service" Nothing $ do
   addRoutes jobRoutes
   return $ JobService pg
 
 
 instance HasPostgres (Handler b JobService) where
   getPostgresState = with pg get
+  setLocalPostgresState s = local (set (pg . snapletValue) s)
 
 
 

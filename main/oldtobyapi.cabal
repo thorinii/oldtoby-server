@@ -35,6 +35,7 @@ executable oldtobyapi
     heist,
     base,
     bytestring,
+    unordered-containers,
     lens,
     mtl,
     random,
